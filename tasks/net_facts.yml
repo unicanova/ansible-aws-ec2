@@ -1,0 +1,27 @@
+---
+#
+- ec2_vpc_net_facts:
+    region: "{{ vpc.aws_vpc_region }}"
+    filters:
+      "tag:Name": "{{ vpc.aws_vpc_name }}"
+  register: net_facts
+
+- set_fact:
+    vpc_id: "{{ net_facts.vpcs[0].vpc_id }}"
+
+- ec2_vpc_subnet_facts:
+    region: "{{ vpc.aws_vpc_region }}"
+    filters:
+      vpc-id: "{{ vpc_id }}"
+  register: subnet_facts
+
+- ec2_group_facts:
+    region: "{{ vpc.aws_vpc_region }}"
+    filters:
+      vpc-id: "{{ vpc_id }}"
+      group_name: "{{ vpc.sg }}"
+  register: sec_group
+
+- set_fact:
+    subnet_ids: "{{ subnet_facts.subnets|map(attribute='id')|list }}"
+    sec_group_id: "{{ sec_group.security_groups[0].group_id }}"

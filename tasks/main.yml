@@ -1,0 +1,68 @@
+---
+# tasks file for aws-ec2
+- name: "gather facts"
+  include: net_facts.yml
+
+- name: "Amazon EC2 | Create Key Pair"
+  ec2_key:
+    name: "{{ ec2.ssh_key }}"
+    region: "{{ aws.region }}"
+    key_material: "{{ item }}"
+  with_file: ~/.ssh/id_rsa.pub
+
+- name: "Get found_workers EC2 facts"
+  ec2_instance_facts:
+    region: "{{ aws.region }}"
+    filters:
+      "tag:Role": "{{ ec2.tag_Role }}"
+      "tag:Type": "worker"
+      "instance-state-name": "running"
+  register: found_workers
+
+- name: "Get found_managers EC2 facts"
+  ec2_instance_facts:
+    region: "{{ aws.region }}"
+    filters:
+      "tag:Role": "{{ ec2.tag_Role }}"
+      "tag:Type": "manager"
+      "instance-state-name": "running"
+  register: found_managers
+
+- include: create_ec2.yml
+  when:
+    - hostvars.localhost.found_managers is defined
+    - hostvars.localhost.found_workers is defined
+
+- name: "Get EC2 facts"
+  ec2_instance_facts:
+    region: "{{ aws.region }}"
+    filters:
+      "tag:Role": "{{ ec2.tag_Role }}"
+      "instance-state-name": "running"
+  register: found
+
+- name: "refresh hosts inventory list"
+  meta: refresh_inventory
+
+- name: "Create the tag_Type_{{item.tags.Type}} host group"
+  add_host: 
+    name: "{{ item.public_dns_name }}"
+    groups:
+      - "tag_Role_{{ ec2.tag_Role }}"
+      - "swarm"
+      - "tag_Type_{{item.tags.Type}}"
+      - "docker_swarm_{{item.tags.Type}}"
+    ec2_region: "{{ ec2.aws_ec2_region }}"
+    instance_name: "{{ item.tags.Name }}"
+  with_items: "{{ found.instances }}"
+  when: found.instances|length == "{{ ec2.count_worker+ec2.count_manager }}"|int
+
+- name: Wait for the instances to boot by checking the ssh port
+  wait_for:
+    host: "{{item.public_ip_address}}"
+    port: 22
+    delay: 2
+    timeout: 300
+    state: started
+  with_items: "{{ found.instances }}"
+
