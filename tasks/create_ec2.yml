@@ -3,7 +3,7 @@
 - name: "Create EC2 manager instances"
   ec2:
     key_name: "{{ ec2.ssh_key }}"
-    instance_type: "{{ ec2.type }}"
+    instance_type: "{{ ec2.manager_type }}"
     image: "{{ ec2.image }}"
     wait: yes
     wait_timeout: 500
@@ -26,7 +26,7 @@
 - name: "Create EC2 worker instances"
   ec2:
     key_name: "{{ ec2.ssh_key }}"
-    instance_type: "{{ ec2.type }}"
+    instance_type: "{{ ec2.worker_type }}"
     image: "{{ ec2.image }}"
     wait: yes
     wait_timeout: 500
