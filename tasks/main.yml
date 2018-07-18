@@ -5,6 +5,8 @@
 
 - name: "Amazon EC2 | Create Key Pair"
   ec2_key:
+    aws_access_key: "{{ ec2_access_key }}"
+    aws_secret_key: "{{ ec2_secret_key }}"
     name: "{{ ec2.ssh_key }}"
     region: "{{ aws.region }}"
     key_material: "{{ item }}"
@@ -13,6 +15,8 @@
 - name: "Get found_workers EC2 facts"
   ec2_instance_facts:
     region: "{{ aws.region }}"
+    aws_access_key: "{{ ec2_access_key }}"
+    aws_secret_key: "{{ ec2_secret_key }}"
     filters:
       "tag:Role": "{{ ec2.tag_Role }}"
       "tag:Type": "worker"
@@ -22,6 +26,8 @@
 - name: "Get found_managers EC2 facts"
   ec2_instance_facts:
     region: "{{ aws.region }}"
+    aws_access_key: "{{ ec2_access_key }}"
+    aws_secret_key: "{{ ec2_secret_key }}"
     filters:
       "tag:Role": "{{ ec2.tag_Role }}"
       "tag:Type": "manager"
@@ -35,6 +41,8 @@
 
 - name: "Get EC2 facts"
   ec2_instance_facts:
+    aws_access_key: "{{ ec2_access_key }}"
+    aws_secret_key: "{{ ec2_secret_key }}"
     region: "{{ aws.region }}"
     filters:
       "tag:Role": "{{ ec2.tag_Role }}"

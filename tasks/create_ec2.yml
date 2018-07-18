@@ -3,6 +3,8 @@
 - name: "Create EC2 manager instances"
   ec2:
     key_name: "{{ ec2.ssh_key }}"
+    aws_access_key: "{{ ec2_access_key }}"
+    aws_secret_key: "{{ ec2_secret_key }}"
     instance_type: "{{ ec2.manager_type }}"
     image: "{{ ec2.image }}"
     wait: yes
@@ -26,6 +28,8 @@
 - name: "Create EC2 worker instances"
   ec2:
     key_name: "{{ ec2.ssh_key }}"
+    aws_access_key: "{{ ec2_access_key }}"
+    aws_secret_key: "{{ ec2_secret_key }}"
     instance_type: "{{ ec2.worker_type }}"
     image: "{{ ec2.image }}"
     wait: yes
