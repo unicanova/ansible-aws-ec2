@@ -10,12 +10,13 @@
     aws_access_key: "{{ ec2_access_key }}"
     aws_secret_key: "{{ ec2_secret_key }}"
     region: "{{ aws.region }}"
+    force: true
   register: ec2_key_result
                                                            
 - name: "Save private key"
   copy: 
     content: "{{ ec2_key_result.key.private_key }}" 
-    dest: "~/.ssh/{{ ec2.ssh_key }}.pem" 
+    dest: "/tmp/{{ ec2.ssh_key }}.pem" 
     mode: 0600
   when: ec2_key_result.changed
 
