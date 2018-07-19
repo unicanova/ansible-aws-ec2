@@ -3,14 +3,18 @@
 - name: "gather facts"
   include: net_facts.yml
 
-- name: "Amazon EC2 | Create Key Pair"
+ 
+- name: "Create a new EC2 key"
   ec2_key:
-    aws_access_key: "{{ ec2_access_key }}"
-    aws_secret_key: "{{ ec2_secret_key }}"
     name: "{{ ec2.ssh_key }}"
     region: "{{ aws.region }}"
-    key_material: "{{ item }}"
-  with_file: ~/.ssh/id_rsa.pub
+  register: ec2_key_result
+                                                           
+- name: "Save private key"
+  copy: 
+    content: "{{ ec2_key_result.key.private_key }}" 
+    dest: "./{{ ec2.ssh_key }}.pem" mode=0600
+  when: ec2_key_result.changed
 
 - name: "Get found_workers EC2 facts"
   ec2_instance_facts:
