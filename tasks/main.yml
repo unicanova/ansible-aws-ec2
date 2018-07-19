@@ -15,7 +15,7 @@
 - name: "Save private key"
   copy: 
     content: "{{ ec2_key_result.key.private_key }}" 
-    dest: "./{{ ec2.ssh_key }}.pem" 
+    dest: "~/.ssh/{{ ec2.ssh_key }}.pem" 
     mode: 0600
   when: ec2_key_result.changed
 
