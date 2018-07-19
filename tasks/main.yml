@@ -7,6 +7,8 @@
 - name: "Create a new EC2 key"
   ec2_key:
     name: "{{ ec2.ssh_key }}"
+    aws_access_key: "{{ ec2_access_key }}"
+    aws_secret_key: "{{ ec2_secret_key }}"
     region: "{{ aws.region }}"
   register: ec2_key_result
                                                            
