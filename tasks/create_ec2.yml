@@ -11,7 +11,7 @@
     wait_timeout: 500
     region: "{{ aws.region }}"
     group_id: "{{ sec_group_id }}"
-    user_data: "{{ lookup('file', 'user_data.sh') }}"
+    user_data: "{{ lookup('file', 'vars/user_data.sh') }}"
     instance_tags:
       Role: "{{ ec2.tag_Role }}"
       Type: "manager"
@@ -37,7 +37,7 @@
     wait_timeout: 500
     region: "{{ aws.region }}"
     group_id: "{{ sec_group_id }}"
-    user_data: "{{ lookup('file', 'user_data.sh') }}"
+    user_data: "{{ lookup('file', 'vars/user_data.sh') }}"
     instance_tags:
       Role: "{{ ec2.tag_Role }}"
       Type: "worker"
