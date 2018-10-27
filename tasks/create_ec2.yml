@@ -19,6 +19,10 @@
     count: 1
     vpc_subnet_id: "{{ subnet_ids[(item+(subnet_ids|length)) % (subnet_ids|length)] }}"
     assign_public_ip: yes
+    volumes:
+      - device_name: /dev/sda1
+        volume_type: gp2
+        volume_size: 50
   register: ec2in_m
   async: 7200
   poll: 0
@@ -44,6 +48,10 @@
       Name: "worker-0{{item}}{{ range(10,100)|list|random}}"
     vpc_subnet_id: "{{ subnet_ids[ (item+(subnet_ids|length)) % (subnet_ids|length)] }}"
     assign_public_ip: yes
+    volumes:
+      - device_name: /dev/sda1
+        volume_type: gp2
+        volume_size: 50
   loop: "{{ range(1,(ec2.count_worker|int-hostvars.localhost.found_workers.instances|length)+1)|list }}"
   register: ec2in_w
   async: 7200
